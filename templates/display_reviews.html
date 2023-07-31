@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Reviews</title>
+</head>
+<body>
+    <h1>Product Reviews</h1>
+    <table border="1">
+        <thead>
+            <tr><th>Id</th>
+                <th>Product Name</th>
+                <th>Name</th>
+                <th>Rating</th>
+                <th>Comments</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for review in reviews %}
+            <tr><></td>
+                <td>{{ review[0] }}</td>
+                <td>{{ review[1] }}</td>
+                <td>{{ review[2] }}</td>
+                <td>{{ review[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
