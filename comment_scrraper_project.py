@@ -1,20 +1,9 @@
 from flask import Flask, request, render_template, redirect, url_for
 import requests
 from bs4 import BeautifulSoup
-from flask_sqlalchemy import SQLAlchemy
+import pandas as pd
 
 obj = Flask(__name__)
-DATABASE_NAME = 'reviews.db'
-obj.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///reviews.db"
-obj.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db = SQLAlchemy(obj)
-
-class Reviews(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    product_name = db.Column(db.String(50), nullable=False)
-    name = db.Column(db.String(200), nullable=False)
-    rating = db.Column(db.Float, nullable=False)
-    comments = db.Column(db.String(500), nullable=False)
 
 @obj.route('/', methods=['POST', 'GET'])
 def Home():
@@ -28,27 +17,38 @@ def Home():
         response = requests.get(url)
         soup = BeautifulSoup(response.content, "html.parser")
         reviews = soup.find_all('div', {'data-hook': 'review'})
-     
+        
+        product=[]
+        rating=[]
+        comments=[]
+        name=[]
         for i,review in enumerate(reviews):
-            product_name = product_name
-            rating = float((review.find('a', {'data-hook': 'review-title'}).text)[:3])
-            comments = (review.find('a', {'data-hook': 'review-title'}).text)[18:]
-            name = review.find('div', {'class': 'a-profile-content'}).text
-            obj = Reviews(id=i,product_name=product_name, rating=rating, comments=comments, name=name)
-            db.session.add(obj)
-            db.session.commit()
-        
-        allreview = Reviews.query.all()
-        
-        return render_template('display_reviews.html',allreview)
+            product.append(product_name)
+            rating.append(float((review.find('a', {'data-hook': 'review-title'}).text)[:3]))
+            comments.append((review.find('a', {'data-hook': 'review-title'}).text)[18:])
+            name.append(review.find('div', {'class': 'a-profile-content'}).text)
+        table={"Product":product,"Custmer_Name":name,"Rating":rating,"Comments":comments}
+        result=pd.DataFrame(table)
 
-@obj.route('/display_reviews')
-def display_reviews():
-    reviews = Reviews.query.all()
-    return render_template('display_reviews.html', reviews=reviews)
+        try:
+            existing_data_df = pd.read_excel('review.xlsx')
+        except FileNotFoundError:
+            existing_data_df = pd.DataFrame()
+
+        appended_data_df = pd.concat([existing_data_df,result], ignore_index=True)
+
+
+        with pd.ExcelWriter('review.xlsx', mode='a', if_sheet_exists='replace', engine='openpyxl') as writer:
+            appended_data_df.to_excel(writer, index=False, sheet_name='Sheet1')
+
+            
+      
+        
+        
+
+
 
 if __name__ == "__main__":
-    db.create_all()  # Create the database tables
     obj.run()
 
 
