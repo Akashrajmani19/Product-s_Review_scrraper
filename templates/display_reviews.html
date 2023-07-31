@@ -1,30 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Product Reviews</title>
+    <title>Display Data</title>
 </head>
 <body>
-    <h1>Product Reviews</h1>
+    <h1>Data from Amazon Reviews</h1>
     <table border="1">
-        <thead>
-            <tr><th>Id</th>
-                <th>Product Name</th>
-                <th>Name</th>
-                <th>Rating</th>
-                <th>Comments</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for review in reviews %}
-            <tr><></td>
-                <td>{{ review[0] }}</td>
-                <td>{{ review[1] }}</td>
-                <td>{{ review[2] }}</td>
-                <td>{{ review[3] }}</td>
-                <td>{{ review[4] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+        <tr>
+            <th>Product</th>
+            <th>Customer Name</th>
+            <th>Rating</th>
+            <th>Comments</th>
+        </tr>
+        {% for record in records %}
+        <tr>
+            <td>{{ record['Product'] }}</td>
+            <td>{{ record['Customer_Name'] }}</td>
+            <td>{{ record['Rating'] }}</td>
+            <td>{{ record['Comments'] }}</td>
+        </tr>
+        {% endfor %}
     </table>
 </body>
 </html>
